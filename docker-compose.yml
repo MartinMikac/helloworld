@@ -3,5 +3,32 @@ zf:
   dockerfile: Dockerfile
   ports:
    - "8080:80"
+  links:
+    - mariadb:mysql   
   volumes:
    - .:/var/www
+
+phpmyadmin:
+  image: phpmyadmin/phpmyadmin
+  environment:
+    MYSQL_USER: admin
+    MYSQL_PASSWORD: test
+    MYSQL_ROOT_PASSWORD: root
+    PMA_HOST: mariadb
+    PMA_PORT: 3306    
+  ports:
+    - "8888:80"
+  links:
+    - mariadb:mysql 
+   
+mariadb:
+  image: mariadb
+  volumes:
+   - ./mariadb:/var/lib/mysql
+  environment:
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_USER: admin
+    MYSQL_PASSWORD: test
+    MYSQL_DATABASE: database
+#  ports:
+#   - "8889:3306"
