@@ -1,34 +1,43 @@
-zf:
-  build: .
-  dockerfile: Dockerfile
-  ports:
-   - "8080:80"
-  links:
-    - mariadb:mysql   
-  volumes:
-   - .:/var/www
+version: '3'
 
-phpmyadmin:
-  image: phpmyadmin/phpmyadmin
-  environment:
-    MYSQL_USER: admin
-    MYSQL_PASSWORD: test
-    MYSQL_ROOT_PASSWORD: root
-    PMA_HOST: mariadb
-    PMA_PORT: 3306    
-  ports:
-    - "8888:80"
-  links:
-    - mariadb:mysql 
-   
-mariadb:
-  image: mariadb
-  volumes:
-   - ./mariadb:/var/lib/mysql
-  environment:
-    MYSQL_ROOT_PASSWORD: root
-    MYSQL_USER: admin
-    MYSQL_PASSWORD: test
-    MYSQL_DATABASE: database
-#  ports:
-#   - "8889:3306"
+services:
+
+  mariadb:
+    image: mariadb
+    volumes:
+     - db_data:/var/lib/mysql
+    restart: always
+    ports:
+     - "3306" 
+    expose:
+     - "3306"
+    environment:
+       MYSQL_ROOT_PASSWORD: somewordpress
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD: wordpress
+       
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links:
+     - mariadb:mysql
+    ports:
+     - 8888:80
+    environment:
+     MYSQL_USERNAME: root
+     MYSQL_ROOT_PASSWORD: examplepass
+
+  zf:
+    build: .
+#    dockerfile: Dockerfile
+    ports:
+     - "8080:80"
+    links:
+     - mariadb:mysql   
+    volumes:
+     - .:/var/www
+
+volumes:
+    db_data:
+    
+        
